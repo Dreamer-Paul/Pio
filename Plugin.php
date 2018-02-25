@@ -4,7 +4,7 @@
  * 
  * @package Pio
  * @author Dreamer-Paul
- * @version 1.0
+ * @version 1.0.1
  * @link https://paugram.com
  */
  
@@ -30,7 +30,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
     /* 插件实现方法 */
     public static function header(){
-        echo "<style>#pio{ left: 0; bottom: 0; position: fixed; pointer-events: none; } @media screen and (max-width: 768px){ #pio{ width: 8em; } }</style>";
+        echo "<style>#pio{ left: 0; bottom: 0; z-index: 520; position: fixed; pointer-events: none; } @media screen and (max-width: 768px){ #pio{ width: 8em; } }</style>";
     }
     public static function footer(){
         $ppd = Helper::options()->pluginUrl;
