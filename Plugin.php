@@ -4,7 +4,7 @@
  *
  * @package Pio
  * @author Dreamer-Paul
- * @version 1.1
+ * @version 1.2
  * @link https://paugram.com
  */
 
@@ -29,17 +29,30 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             echo "<h2>Pio 看版娘插件 (".$version.")</h2>";
             echo "<p>By: <a href='https://github.com/Dreamer-Paul'>Dreamer-Paul</a></p>";
             echo "<p class='buttons'><a href='https://paugram.com/coding/add-poster-girl-with-plugin.html'>项目介绍</a>
-                  <a href='https://github.com/Dreamer-Paul/Pio/releases/tag/".$version."'>更新日志</a></p>";
+                  <a href='https://github.com/Dreamer-Paul/Pio/releases'>更新日志</a></p>";
 
             $update = file_get_contents("https://api.paugram.com/update/?name=".$name."&current=".$version."&site=".$_SERVER['HTTP_HOST']);
             $update = json_decode($update, true);
 
-            if($update['text']){echo "<p>".$update['text']."</p>"; };
-            if($update['message']){echo "<p>".$update['message']."</p>"; };
+            if(isset($update['text'])){echo "<p>".$update['text']."</p>"; };
+            if(isset($update['message'])){echo "<p>".$update['message']."</p>"; };
 
             echo "</div>";
         }
-        paul_update("Pio", "1.1");
+        paul_update("Pio", "1.2");
+
+        // 读取模型文件夹
+        $models = array();
+        $load = glob("../usr/plugins/Pio/models/*");
+
+        foreach($load as $key => &$value){
+            $aaa = substr($value, 26);
+            $models[$aaa] = ucfirst($aaa);
+        };
+
+        // 自定义模型选择
+        $choose_models = new Typecho_Widget_Helper_Form_Element_Select('choose_models', $models, 'pio', _t('选择模型'), _t('选择插件 Models 目录下的模型，每个模型为一个文件夹，并确定配置文件名为 <a>model.json</a>'));
+        $form->addInput($choose_models);
 
         // 自定义宽高
         $custom_width = new Typecho_Widget_Helper_Form_Element_Text('custom_width', NULL, NULL, _t('自定义宽度'), _t('在这里填入自定义宽度，部分模型需要修改'));
@@ -49,7 +62,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
         $form->addInput($custom_height);
 
         // 自定义模型
-        $custom_model = new Typecho_Widget_Helper_Form_Element_Text('custom_model', NULL, NULL, _t('自定义配置文件地址'), _t('在这里填入一个模型 JSON 配置文件地址，可供更换模型，不填则使用默认配置文件'));
+        $custom_model = new Typecho_Widget_Helper_Form_Element_Text('custom_model', NULL, NULL, _t('自定义配置文件地址'), _t('在这里填入一个模型 JSON 配置文件地址，可供使用外链模型，不填则使用插件目录下的模型'));
         $form->addInput($custom_model);
     }
 
@@ -82,8 +95,11 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
         if(Typecho_Widget::widget('Widget_Options')->Plugin('Pio')->custom_model){
             echo "<script>loadlive2d('pio', '" . Typecho_Widget::widget('Widget_Options')->Plugin('Pio')->custom_model . "');</script>". "\n";
         }
+        else if(Typecho_Widget::widget('Widget_Options')->Plugin('Pio')->choose_models){
+            echo "<script>loadlive2d('pio', '" . Helper::options()->pluginUrl . "/Pio/models/" . Typecho_Widget::widget('Widget_Options')->Plugin('Pio')->choose_models . "/model.json');</script>". "\n";
+        }
         else{
-            echo "<script>loadlive2d('pio', '" . Helper::options()->pluginUrl . "/Pio/model.json');</script>". "\n";
+            echo "<script>loadlive2d('pio', '" . Helper::options()->pluginUrl . "/Pio/models/pio/model.json');</script>". "\n";
         }
     }
 }
