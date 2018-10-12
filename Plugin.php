@@ -4,7 +4,7 @@
  *
  * @package Pio
  * @author Dreamer-Paul
- * @version 1.3
+ * @version 2.0
  * @link https://paugram.com
  */
 
@@ -39,15 +39,15 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             echo "</div>";
         }
-        paul_update("Pio", "1.3");
+        paul_update("Pio", "2.0");
 
         // 读取模型文件夹
         $models = array();
         $load = glob("../usr/plugins/Pio/models/*");
 
-        foreach($load as $key => &$value){
-            $aaa = substr($value, 26);
-            $models[$aaa] = ucfirst($aaa);
+        foreach($load as $key => $value){
+            $single = substr($value, 26);
+            $models[$single] = ucfirst($single);
         };
 
         // 自定义模型选择
@@ -73,6 +73,33 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
         // 自定义模型
         $custom_model = new Typecho_Widget_Helper_Form_Element_Text('custom_model', NULL, NULL, _t('自定义配置文件地址'), _t('在这里填入一个模型 JSON 配置文件地址，可供使用外链模型，不填则使用插件目录下的模型'));
         $form -> addInput($custom_model);
+
+        // 展现模式
+        $custom_mode = new Typecho_Widget_Helper_Form_Element_Radio('custom_mode',
+            array(
+              'static' => _t('静态'),
+              'fixed' => _t('固定'),
+              'draggable' => _t('可移动'),
+            ),
+            'static', _t('展现模式'), _t('自定义看板娘的展现模式。静态模式将不启用按钮交互功能'));
+        $form -> addInput($custom_mode);
+
+        // 是否在手机上隐藏
+        $hidden = new Typecho_Widget_Helper_Form_Element_Radio('hidden',
+            array(
+              '0' => _t('关闭'),
+              '1' => _t('开启'),
+            ),
+            '0', _t('浏览体验'), _t('是否在手机版上隐藏看板娘'));
+        $form -> addInput($hidden);
+
+        // 自定义文字配置
+        $talk_content = new Typecho_Widget_Helper_Form_Element_Textarea('talk_content', NULL, '{}', _t('自定义提示内容'), _t('在这里填入你的自定义看板娘提示内容，如想保持默认，需要填写 "{}" 否则会导致插件无法运行'));
+        $form -> addInput($talk_content);
+
+        // 自定义选择器配置
+        $selector = new Typecho_Widget_Helper_Form_Element_Textarea('selector', NULL, '{}', _t('自定义内容选择器'), _t('在这里填入部分功能所用到的自定义选择器，如不想启用此类功能，需要填写 "{}" 否则会导致插件无法运行'));
+        $form -> addInput($selector);
     }
 
     /* 个人用户的配置方法 */
@@ -80,36 +107,65 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
     /* 插件实现方法 */
     public static function header(){
+        echo "<link href='" . Helper::options() -> pluginUrl . "/Pio/static/pio.css' rel='stylesheet' type='text/css'/>\n";
         $pos = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> position;
-        echo "<style>#pio{ $pos: 0; bottom: 0; z-index: 520; position: fixed; pointer-events: none; } @media screen and (max-width: 768px){ #pio{ width: 8em; } }</style>";
+        echo "<style>.pio-container{ $pos: 0 }</style>";
     }
     public static function footer(){
-        $height = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> custom_height;
-        $width = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> custom_width;
+        // 生成画布
+        function getCanvas(){
+            $height = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> custom_height;
+            $width = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> custom_width;
 
-        if($height && $width){
-            echo "<canvas id='pio' width='".$width."' height='".$height."'></canvas>";
-        }
-        else if($height){
-            echo "<canvas id='pio' width='280' height='".$height."'></canvas>";
-        }
-        else if($width){
-            echo "<canvas id='pio' width='".$width."' height='250'></canvas>";
-        }
-        else{
-            echo "<canvas id='pio' width='280' height='250'></canvas>";
+            if(!$width){ $width = 280; }
+            if(!$height){ $height = 250; }
+
+            return "<canvas id='pio' width='".$width."' height='".$height."'></canvas>";
         }
 
-        echo "<script src='" . Helper::options() -> pluginUrl . "/Pio/l2d.js'></script>" . "\n";
+        // 生成载入器
+        function getLoader(){
+            $config = array();
+            $plug = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio');
 
-        if(Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> custom_model){
-            echo "<script>loadlive2d('pio', '" . Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> custom_model . "');</script>". "\n";
+            if($plug -> custom_model){
+                $model = $plug -> custom_model;
+            }
+            else if($plug -> choose_models){
+                $model = Helper::options() -> pluginUrl . "/Pio/models/" . $plug -> choose_models . "/model.json";
+            }
+            else{
+                $model = Helper::options() -> pluginUrl . "/Pio/models/pio/model.json";
+            }
+
+            $config["mode"] = $plug -> custom_mode;
+            $config["hidden"] = $plug -> hidden == 1 ? true : false;
+
+            $config["model"] = array();
+            $config["model"][0] = $model;
+            $config["content"] = json_decode($plug -> talk_content, true);
+            $config["selector"] = json_decode($plug -> selector, true);
+
+            return '<script>var pio = new poster_girl(' . json_encode($config, JSON_UNESCAPED_SLASHES) . ');</script>';
         }
-        else if(Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> choose_models){
-            echo "<script>loadlive2d('pio', '" . Helper::options() -> pluginUrl . "/Pio/models/" . Typecho_Widget::widget('Widget_Options') -> Plugin('Pio') -> choose_models . "/model.json');</script>". "\n";
-        }
-        else{
-            echo "<script>loadlive2d('pio', '" . Helper::options() -> pluginUrl . "/Pio/models/pio/model.json');</script>". "\n";
-        }
+
+        $canvas = getCanvas();
+        $loader = getLoader();
+
+        echo <<< Pio
+    <div class="pio-container">
+        <div class="action-menu">
+            <span class="home"></span>
+            <span class="skin"></span>
+            <span class="info"></span>
+            <span class="close"></span>
+        </div>
+        $canvas
+    </div>
+Pio;
+
+        echo "<script src='" . Helper::options() -> pluginUrl . "/Pio/static/l2d.js'></script>" . "\n";
+        echo "<script src='" . Helper::options() -> pluginUrl . "/Pio/static/pio.js'></script>" . "\n";
+        echo $loader;
     }
 }
