@@ -13,6 +13,7 @@
 .pio-container{
     left: 0;
     bottom: 0;
+    z-index: 52;
     position: fixed;
     user-select: none;
 }
