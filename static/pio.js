@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2018.10.12
+# Last Update: 2018.12.30
 
 一个支持换模型的 Live2D 插件，供 Typecho 使用。
 
@@ -10,24 +10,14 @@
 
 ---- */
 
-var poster_girl = function (prop) {
+var Paul_Girl = function (prop) {
     var current = {
         idol: 0,
+        menu: document.querySelector(".pio-container .pio-action"),
         canvas: document.getElementById("pio"),
         body: document.getElementsByClassName("pio-container")[0],
         root: document.location.protocol +'//' + document.location.hostname +'/'
     };
-
-    var elements = {
-        home: current.body.getElementsByClassName("home")[0],
-        skin: current.body.getElementsByClassName("skin")[0],
-        info: current.body.getElementsByClassName("info")[0],
-        close: current.body.getElementsByClassName("close")[0]
-    };
-
-    var dialog = document.createElement("div");
-    dialog.className = "dialog";
-    current.body.appendChild(dialog);
 
     /* - 方法 */
     var modules = {
@@ -35,6 +25,12 @@ var poster_girl = function (prop) {
         idol: function () {
             current.idol < (prop.model.length - 1) ? current.idol++ : current.idol = 0;
             return current.idol;
+        },
+        // 创建内容
+        create: function (tag, prop) {
+            var e = document.createElement(tag);
+            if(prop.class) e.className = prop.class;
+            return e;
         },
         // 随机内容
         rand: function (arr) {
@@ -65,6 +61,17 @@ var poster_girl = function (prop) {
         }
     };
 
+    var elements = {
+        home: modules.create("span", {class: "pio-home"}),
+        skin: modules.create("span", {class: "pio-skin"}),
+        info: modules.create("span", {class: "pio-info"}),
+        night: modules.create("span", {class: "pio-night"}),
+        close: modules.create("span", {class: "pio-close"})
+    };
+
+    var dialog = modules.create("div", {class: "pio-dialog"});
+    current.body.appendChild(dialog);
+
     /* - 提示操作 */
     var action = {
         // 欢迎
@@ -72,10 +79,43 @@ var poster_girl = function (prop) {
             if(document.referrer !== "" && document.referrer.indexOf(current.root) === -1){
                 var referrer = document.createElement('a');
                 referrer.href = document.referrer;
-                prop.content.welcome && prop.content.welcome[1] ? modules.render(prop.content.welcome[1].replace(/%t/, "“" + referrer.hostname + "”")) : modules.render("欢迎来自 “" + document.referrer + "” 的朋友！");
+                prop.content.referer ? modules.render(prop.content.referer.replace(/%t/, "“" + referrer.hostname + "”")) : modules.render("欢迎来自 “" + document.referrer + "” 的朋友！");
+            }
+            else if(prop.tips){
+                var text, hour = new Date().getHours();
+
+                if (hour > 22 || hour <= 5) {
+                    text = '你是夜猫子呀？这么晚还不睡觉，明天起的来嘛';
+                }
+                else if (hour > 5 && hour <= 8) {
+                    text = '早上好！';
+                }
+                else if (hour > 8 && hour <= 11) {
+                    text = '上午好！工作顺利嘛，不要久坐，多起来走动走动哦！';
+                }
+                else if (hour > 11 && hour <= 14) {
+                    text = '中午了，工作了一个上午，现在是午餐时间！';
+                }
+                else if (hour > 14 && hour <= 17) {
+                    text = '午后很容易犯困呢，今天的运动目标完成了吗？';
+                }
+                else if (hour > 17 && hour <= 19) {
+                    text = '傍晚了！窗外夕阳的景色很美丽呢，最美不过夕阳红~';
+                }
+                else if (hour > 19 && hour <= 21) {
+                    text = '晚上好，今天过得怎么样？';
+                }
+                else if (hour > 21 && hour <= 23) {
+                    text = '已经这么晚了呀，早点休息吧，晚安~';
+                }
+                else{
+                    text = "保罗说：这是无法被触发的吧";
+                }
+
+                modules.render(text);
             }
             else{
-                prop.content.welcome && prop.content.welcome[0] ? modules.render(prop.content.welcome[0]) : modules.render("欢迎来到保罗的小窝！");
+                prop.content.welcome ? modules.render(prop.content.welcome) : modules.render("欢迎来到本站！");
             }
         },
         // 文章
@@ -107,47 +147,53 @@ var poster_girl = function (prop) {
         // 右侧按钮
         buttons: function () {
             // 返回首页
-            if(elements.home){
-                elements.home.onclick = function () {
-                    location.href = current.root;
-                };
-                elements.home.onmouseover = function () {
-                    prop.content.home ? modules.render(prop.content.home) : modules.render("点击这里回到首页！");
-                };
-            }
+            elements.home.onclick = function () {
+                location.href = current.root;
+            };
+            elements.home.onmouseover = function () {
+                prop.content.home ? modules.render(prop.content.home) : modules.render("点击这里回到首页！");
+            };
+            current.menu.appendChild(elements.home);
 
             // 更换模型
-            if(elements.skin){
-                elements.skin.onclick = function () {
-                    loadlive2d("pio", prop.model[modules.idol()]);
-                    prop.content.skin && prop.content.skin[1] ? modules.render(prop.content.skin[1]) : modules.render("新衣服真漂亮~");
-                };
-                elements.skin.onmouseover = function () {
-                    prop.content.skin && prop.content.skin[0] ? modules.render(prop.content.skin[0]) : modules.render("想看看我的新衣服吗？");
-                };
-            }
+            elements.skin.onclick = function () {
+                loadlive2d("pio", prop.model[modules.idol()]);
+                prop.content.skin && prop.content.skin[1] ? modules.render(prop.content.skin[1]) : modules.render("新衣服真漂亮~");
+            };
+            elements.skin.onmouseover = function () {
+                prop.content.skin && prop.content.skin[0] ? modules.render(prop.content.skin[0]) : modules.render("想看看我的新衣服吗？");
+            };
+            if(prop.model.length > 1) current.menu.appendChild(elements.skin);
 
             // 关于我
-            if(elements.info){
-                elements.info.onclick = function () {
-                    window.open("https://paugram.com/coding/add-poster-girl-with-plugin.html");
+            elements.info.onclick = function () {
+                prop.content.link ? window.open(prop.content.link) : window.open("https://paugram.com/coding/add-poster-girl-with-plugin.html");
+            };
+            elements.info.onmouseover = function () {
+                modules.render("想了解更多关于我的信息吗？");
+            };
+            current.menu.appendChild(elements.info);
+
+            // 夜间模式
+            if(prop.night){
+                elements.night.onclick = function () {
+                    eval(prop.night);
                 };
-                elements.info.onmouseover = function () {
-                    modules.render("想了解更多关于我的信息吗？");
+                elements.night.onmouseover = function () {
+                    modules.render("夜间点击这里可以保护眼睛呢");
                 };
+                current.menu.appendChild(elements.night);
             }
 
             // 关闭看板娘
-            if(elements.close){
-                elements.close.onclick = function () {
-                    modules.destroy();
-                };
-                elements.close.onmouseover = function () {
-                    prop.content.close ? modules.render(prop.content.close) : modules.render("QWQ 下次再见吧~");
-                };
-
-                document.cookie = "posterGirl=false;" + "path=/";
-            }
+            elements.close.onclick = function () {
+                modules.destroy();
+            };
+            elements.close.onmouseover = function () {
+                prop.content.close ? modules.render(prop.content.close) : modules.render("QWQ 下次再见吧~");
+            };
+            current.menu.appendChild(elements.close);
+            document.cookie = "posterGirl=false;" + "path=/";
         }
     };
 
@@ -172,6 +218,7 @@ var poster_girl = function (prop) {
 
                 function move(e) {
                     body.classList.add("active");
+                    body.classList.remove("right");
                     body.style.left = (event.clientX - location.x) + 'px';
                     body.style.top  = (event.clientY - location.y) + 'px';
                 }

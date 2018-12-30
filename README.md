@@ -5,12 +5,12 @@
 
 ## 使用方法
 1. Star 本项目
-2. Clone 本项目
+2. 从这里 [下载](https://github.com/Dreamer-Paul/Pio/archive/master.zip) 本插件
 3. 将插件文件夹重命名为 `Pio`
 4. 上传本插件，并放置在 `usr/plugins/` 目录下
-5. 登录你的 Typecho 后台，并进行安装即可食用~
+5. 登录你的 Typecho 后台，选择启用插件即可食用~
 6. 如果你有自己的模型，可以将模型放在 `models` 目录下，并在插件设置里选择（需要确认模型的配置文件名称是否为 `model.json`）。或是在插件设置填写一个绝对链接
-7. 保罗自己搭建了一个模型资源收集站点 - [梦象](https://mx.paugram.com)，你可以在这里下载到更多的模型，如果你有能力的话欢迎为我提供更多资源~
+7. 保罗自己搭建了一个模型资源收集站点 - [梦象](https://mx-model.ga)，你可以在这里下载到更多的模型，如果你有能力的话欢迎为我提供更多资源~
 
 ## 项目故事
 详见我的博文：[给你的博客增加动态看板娘](https://paugram.com/coding/add-poster-girl-with-plugin.html)
