@@ -4,7 +4,7 @@
  *
  * @package Pio
  * @author Dreamer-Paul
- * @version 2.1
+ * @version 2.1.5
  * @link https://paugram.com
  */
 
@@ -39,7 +39,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             echo "</div>";
         }
-        paul_update("Pio", "2.1");
+        paul_update("Pio", "2.1.5");
 
         // 读取模型文件夹
         $models = array();
@@ -88,13 +88,13 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             'static', _t('展现模式'), _t('自定义看板娘的展现模式。静态模式将不启用按钮交互功能'));
         $form -> addInput($custom_mode);
 
-        // 是否在手机上隐藏
+        // 隐藏看板娘
         $hidden = new Typecho_Widget_Helper_Form_Element_Radio('hidden',
             array(
               '0' => _t('关闭'),
               '1' => _t('开启'),
             ),
-            '0', _t('浏览体验'), _t('是否在手机版上隐藏看板娘'));
+            '0', _t('隐藏看板娘'), _t('开启后将在移动设备上隐藏看板娘'));
         $form -> addInput($hidden);
 
         // 是否开启时间小贴士
@@ -103,7 +103,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
               '0' => _t('关闭'),
               '1' => _t('开启'),
             ),
-            '0', _t('时间小贴士'), _t('是否开启时间小贴士，在没有访问来源的情况下展示，将覆盖入站提示'));
+            '0', _t('时间小贴士'), _t('开启后将在没有访问来源的情况下展示，覆盖入站提示'));
         $form -> addInput($tips);
 
         // 自定义文字配置

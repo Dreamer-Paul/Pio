@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2018.12.30
+# Last Update: 2019.1.2
 
 一个支持换模型的 Live2D 插件，供 Typecho 使用。
 
@@ -232,16 +232,22 @@ var Paul_Girl = function (prop) {
         }
     };
 
-    // 判断模式并运行
-    switch (prop.mode){
-        case "static": begin.static(); break;
-        case "fixed":  begin.fixed(); break;
-        case "draggable": begin.draggable(); break;
-    }
+    // 运行
+    this.init = function () {
+        if(prop.hidden === true && window.innerWidth < 400){
+            current.body.classList.add("hidden");
+        }
+        else{
+            switch (prop.mode){
+                case "static": begin.static(); break;
+                case "fixed":  begin.fixed(); break;
+                case "draggable": begin.draggable(); break;
+            }
 
-    if(prop.hidden === true){ current.body.classList.add("hidden") }
-
-    loadlive2d("pio", prop.model[0]);
+            loadlive2d("pio", prop.model[0]);
+        }
+    };
+    this.init();
 };
 
 // 请保留版权说明
