@@ -2,15 +2,15 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2019.1.2
+# Last Update: 2019.2.1
 
-一个支持换模型的 Live2D 插件，供 Typecho 使用。
+一个支持更换 Live2D 模型的 Typecho 插件。
 
 本代码为奇趣保罗原创，并遵守 MIT 开源协议。欢迎访问我的博客：https://paugram.com
 
 ---- */
 
-var Paul_Girl = function (prop) {
+var Paul_Pio = function (prop) {
     var current = {
         idol: 0,
         menu: document.querySelector(".pio-container .pio-action"),
@@ -79,7 +79,7 @@ var Paul_Girl = function (prop) {
             if(document.referrer !== "" && document.referrer.indexOf(current.root) === -1){
                 var referrer = document.createElement('a');
                 referrer.href = document.referrer;
-                prop.content.referer ? modules.render(prop.content.referer.replace(/%t/, "“" + referrer.hostname + "”")) : modules.render("欢迎来自 “" + document.referrer + "” 的朋友！");
+                prop.content.referer ? modules.render(prop.content.referer.replace(/%t/, "“" + referrer.hostname + "”")) : modules.render("欢迎来自 “" + referrer.hostname + "” 的朋友！");
             }
             else if(prop.tips){
                 var text, hour = new Date().getHours();
@@ -194,6 +194,23 @@ var Paul_Girl = function (prop) {
             };
             current.menu.appendChild(elements.close);
             document.cookie = "posterGirl=false;" + "path=/";
+        },
+        custom: function () {
+            for(var i = 0; i < prop.content.custom.length; i++){
+                var e = document.querySelectorAll(prop.content.custom[i].s);
+                var c = prop.content.custom[i].t;
+
+                if(e[0]){
+                    for(var j = 0; j < e.length; j++){
+                        e[j].onmouseover = function () {
+                            modules.render(c);
+                        }
+                    }
+                }
+                else{
+                    console.error("Custom Element Not Found!");
+                }
+            }
         }
     };
 
@@ -243,6 +260,8 @@ var Paul_Girl = function (prop) {
                 case "fixed":  begin.fixed(); break;
                 case "draggable": begin.draggable(); break;
             }
+
+            if(prop.content.custom) action.custom();
 
             loadlive2d("pio", prop.model[0]);
         }

@@ -4,7 +4,7 @@
  *
  * @package Pio
  * @author Dreamer-Paul
- * @version 2.1.5
+ * @version 2.2
  * @link https://paugram.com
  */
 
@@ -39,7 +39,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             echo "</div>";
         }
-        paul_update("Pio", "2.1.5");
+        paul_update("Pio", "2.2");
 
         // 读取模型文件夹
         $models = array();
@@ -214,7 +214,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             $config["model"] = $model;
 
-            return '<script>var pio = new Paul_Girl(' . json_encode($config, JSON_UNESCAPED_SLASHES) . ');</script>';
+            return '<script>var pio = new Paul_Pio(' . json_encode($config, JSON_UNESCAPED_SLASHES) . ');</script>';
         }
 
         $canvas = getCanvas();

@@ -2,9 +2,9 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2018.12.30
+# Last Update: 2019.2.1
 
-一个支持换模型的 Live2D 插件，供 Typecho 使用。
+一个支持更换 Live2D 模型的 Typecho 插件。
 
 本代码为奇趣保罗原创，并遵守 MIT 开源协议。欢迎访问我的博客：https://paugram.com
 
@@ -23,11 +23,12 @@
 
 .pio-container .pio-action{
     top: 3em;
-    right: 0;
     opacity: 0;
     position: absolute;
     transition: opacity .3s;
 }
+.pio-container.left .pio-action{ right: 0 }
+.pio-container.right .pio-action{ left: 0 }
 .pio-container:hover .pio-action{ opacity: 1 }
 
 .pio-action span{
