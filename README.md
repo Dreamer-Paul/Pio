@@ -24,3 +24,6 @@
 
 ## 使用的开源项目
  - [Live2D-Src](https://github.com/journey-ad/live2d_src)
+
+## 感谢
+ - [Live2D](https://www.live2d.com)
