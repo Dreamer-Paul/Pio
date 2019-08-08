@@ -4,7 +4,7 @@
  *
  * @package Pio
  * @author Dreamer-Paul
- * @version 2.2
+ * @version 2.3
  * @link https://paugram.com
  */
 
@@ -39,7 +39,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             echo "</div>";
         }
-        paul_update("Pio", "2.2");
+        paul_update("Pio", "2.3");
 
         // 读取模型文件夹
         $models = array();
@@ -50,9 +50,13 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             $models[$single] = ucfirst($single);
         };
 
-        // 自定义模型选择
+        // 选择模型
         $choose_models = new Typecho_Widget_Helper_Form_Element_Checkbox('choose_models', $models, 'pio', _t('选择模型'), _t('选择插件 Models 目录下的模型，每个模型为一个文件夹，并确定配置文件名为 <a>model.json</a>'));
         $form -> addInput($choose_models);
+
+        // 选择外链模型
+        $custom_model = new Typecho_Widget_Helper_Form_Element_Text('custom_model', NULL, NULL, _t('选择外链模型'), _t('在这里填入一个模型配置文件 <a>model.json</a> 的地址，可供使用外链模型，不填则使用插件目录下的模型'));
+        $form -> addInput($custom_model);
 
         // 自定义定位
         $position = new Typecho_Widget_Helper_Form_Element_Radio('position',
@@ -69,10 +73,6 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
         $custom_height = new Typecho_Widget_Helper_Form_Element_Text('custom_height', NULL, NULL, _t('自定义高度'), _t('在这里填入自定义高度，部分模型需要修改'));
         $form -> addInput($custom_height);
-
-        // 自定义模型
-        $custom_model = new Typecho_Widget_Helper_Form_Element_Text('custom_model', NULL, NULL, _t('自定义配置文件地址'), _t('在这里填入一个模型 JSON 配置文件地址，可供使用外链模型，不填则使用插件目录下的模型'));
-        $form -> addInput($custom_model);
 
         // 夜间模式函数
         $night = new Typecho_Widget_Helper_Form_Element_Text('night', NULL, NULL, _t('夜间模式函数'), _t('如果你的主题支持夜间模式，请在这里填写主题对应的 JS 函数'));
@@ -107,11 +107,11 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
         $form -> addInput($tips);
 
         // 自定义文字配置
-        $dialog = new Typecho_Widget_Helper_Form_Element_Textarea('dialog', NULL, NULL, _t('自定义提示内容'), _t('在这里填入你的自定义看板娘提示内容，如想保持默认，需要填写 "{}" 否则会导致插件无法运行'));
+        $dialog = new Typecho_Widget_Helper_Form_Element_Textarea('dialog', NULL, NULL, _t('自定义提示内容'), _t('在这里填入你的自定义看板娘提示内容，如想保持默认，请留空'));
         $form -> addInput($dialog);
 
         // 自定义选择器配置
-        $selector = new Typecho_Widget_Helper_Form_Element_Textarea('selector', NULL, NULL, _t('自定义内容选择器'), _t('在这里填入部分功能所用到的自定义选择器，如不想启用此类功能，需要填写 "{}" 否则会导致插件无法运行'));
+        $selector = new Typecho_Widget_Helper_Form_Element_Textarea('selector', NULL, NULL, _t('自定义内容选择器'), _t('在这里填入部分功能所用到的自定义选择器，如不想启用此类功能，请留空'));
         $form -> addInput($selector);
     }
 
@@ -131,49 +131,6 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             return '<canvas id="pio" width="' . (!$width ? 280 : $width) . '" height="' . (!$height ? 250: $height) . '"></canvas>';
         }
 
-        // 生成配置
-        function getConfig(){
-            $plugin = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio');
-
-            $mode = $plugin -> custom_mode;
-            $hidden = $plugin -> hidden == 1 ? true : false;
-            $tips = $plugin -> tips == 1 ? true : false;
-            $content = $plugin -> dialog ? json_decode($plugin -> dialog, true) : "{}";
-            $selector = $plugin -> selector ? json_decode($plugin -> selector, true) : "{}";
-
-            if($plugin -> custom_model){
-                $model = array($plugin -> custom_model);
-            }
-            else if($plugin -> choose_models){
-                $model = $plugin -> choose_models;
-
-                if(is_array($model)){
-                    foreach($model as &$item){
-                        $item = Helper::options() -> pluginUrl . "/Pio/models/" . $item . "/model.json";
-                    }
-                }
-                else{
-                    $model = array(Helper::options() -> pluginUrl . "/Pio/models/" . $model . "/model.json");
-                }
-            }
-            else{
-                $model = array(Helper::options() -> pluginUrl . "/Pio/models/pio/model.json");
-            }
-
-            if($plugin -> night){
-                $night = $plugin -> night;
-            }
-            else{
-                $night = false;
-            }
-
-            return str_replace(
-                array("{mode}", "{hidden}", "{content}", "{selector}", "{model}", "{night}"),
-                array("mode:'" . $mode . "'", "hidden:" . $hidden, "content:" . $content, "selector:" . $selector, "model:" . $model, "night:" . $night),
-                "{mode},{hidden},{content},{selector},{model},{night}"
-            );
-        }
-
         // 生成载入器
         function getLoader(){
             $plugin = Typecho_Widget::widget('Widget_Options') -> Plugin('Pio');
@@ -181,8 +138,8 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             $config = array(
                 "mode" => $plugin -> custom_mode,
                 "hidden" => $plugin -> hidden == 1 ? true : false,
-                "content" => $plugin -> dialog ? json_decode($plugin -> dialog, true) : "{}",
-                "selector" => $plugin -> selector ? json_decode($plugin -> selector, true) : "{}"
+                "content" => $plugin -> dialog ? json_decode($plugin -> dialog, true) : array(),
+                "selector" => $plugin -> selector ? json_decode($plugin -> selector, true) : array()
             );
 
             if($plugin -> custom_model){
@@ -214,7 +171,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             $config["model"] = $model;
 
-            return '<script>var pio = new Paul_Pio(' . json_encode($config, JSON_UNESCAPED_SLASHES) . ');</script>';
+            return '<script>var pio = new Paul_Pio(' . json_encode($config, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ');</script>';
         }
 
         $canvas = getCanvas();

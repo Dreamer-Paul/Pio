@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2019.2.1
+# Last Update: 2019.8.8
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -13,6 +13,7 @@
 .pio-container{
     bottom: 0;
     z-index: 52;
+    color: #666;
     position: fixed;
     user-select: none;
 }

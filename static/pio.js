@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2019.2.13
+# Last Update: 2019.8.8
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -121,12 +121,11 @@ var Paul_Pio = function (prop) {
         // 文章
         article: function () {
             if(prop.selector.articles){
-                var a = document.querySelectorAll(prop.selector.articles), b;
-                prop.content.article ? b = prop.content.article : b = "想阅读 %t 吗？";
+                var obj = document.querySelectorAll(prop.selector.articles);
 
-                for(var i = 0; i < a.length; i++){
-                    a[i].onmouseover = function () {
-                        modules.render(b.replace(/%t/, "“" + this.innerText + "”"));
+                for(var i = 0; i < obj.length; i++){
+                    obj[i].onmouseover = function () {
+                        modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
                     }
                 }
             }
@@ -196,18 +195,17 @@ var Paul_Pio = function (prop) {
             document.cookie = "posterGirl=false;" + "path=/";
         },
         custom: function () {
-            for(var i = 0; i < prop.content.custom.length; i++){
-                var e = document.querySelectorAll(prop.content.custom[i].s);
-                var c = prop.content.custom[i].t;
+            prop.content.custom.forEach(function (t) {
+                var e = document.querySelectorAll(t.selector);
 
-                if(e[0]){
+                if(e.length){
                     for(var j = 0; j < e.length; j++){
                         e[j].onmouseover = function () {
-                            modules.render(c);
+                            modules.render(t.text);
                         }
                     }
                 }
-            }
+            });
         }
     };
 
