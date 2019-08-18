@@ -16,9 +16,10 @@
 6. 你可以通过 [选择](https://docs.paul.ren/pio/#/?id=选择模型) 或 [外链](https://docs.paul.ren/pio/#/?id=选择外链模型) 的方式引用你获得的模型资源
 7. 想了解更多的玩法，欢迎阅读 [插件文档](https://docs.paul.ren/pio)。如果对本项目有任何的建议和想法，欢迎随时提出~
 
-## 项目故事
+## 项目相关
 
-详见我的博文：[给你的博客增加动态看板娘](https://paugram.com/coding/add-poster-girl-with-plugin.html)，帮助文档及常见问题均在这里即时更新。
+- 开发故事：[给你的博客增加动态看板娘](https://paugram.com/coding/add-poster-girl-with-plugin.html)
+- 帮助文档 & 常见问题：[传送门](https://docs.paul.ren/pio)
 
 ## 开源协议
 

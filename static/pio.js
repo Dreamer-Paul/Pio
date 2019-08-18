@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2019.8.8
+# Last Update: 2019.8.18
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -58,6 +58,7 @@ var Paul_Pio = function (prop) {
         // 移除方法
         destroy: function () {
             current.body.parentNode.removeChild(current.body);
+            document.cookie = "posterGirl=false;" + "path=/";
         }
     };
 
@@ -115,33 +116,14 @@ var Paul_Pio = function (prop) {
                 modules.render(text);
             }
             else{
-                prop.content.welcome ? modules.render(prop.content.welcome) : modules.render("欢迎来到本站！");
-            }
-        },
-        // 文章
-        article: function () {
-            if(prop.selector.articles){
-                var obj = document.querySelectorAll(prop.selector.articles);
-
-                for(var i = 0; i < obj.length; i++){
-                    obj[i].onmouseover = function () {
-                        modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
-                    }
-                }
+                modules.render(prop.content.welcome || "欢迎来到本站！");
             }
         },
         // 触摸
         touch: function () {
-            if(prop.content.touch){
-                current.canvas.onclick = function () {
-                    modules.render(prop.content.touch);
-                }
-            }
-            else{
-                current.canvas.onclick = function () {
-                    modules.render(["你在干什么？", "再摸我就报警了！", "HENTAI!", "你够了喔！"]);
-                }
-            }
+            current.canvas.onclick = function () {
+                modules.render(prop.content.touch || ["你在干什么？", "再摸我就报警了！", "HENTAI!", "不可以这样欺负我啦！"]);
+            };
         },
         // 右侧按钮
         buttons: function () {
@@ -150,7 +132,7 @@ var Paul_Pio = function (prop) {
                 location.href = current.root;
             };
             elements.home.onmouseover = function () {
-                prop.content.home ? modules.render(prop.content.home) : modules.render("点击这里回到首页！");
+                modules.render(prop.content.home || "点击这里回到首页！");
             };
             current.menu.appendChild(elements.home);
 
@@ -166,7 +148,7 @@ var Paul_Pio = function (prop) {
 
             // 关于我
             elements.info.onclick = function () {
-                prop.content.link ? window.open(prop.content.link) : window.open("https://paugram.com/coding/add-poster-girl-with-plugin.html");
+                window.open(prop.content.link || "https://paugram.com/coding/add-poster-girl-with-plugin.html");
             };
             elements.info.onmouseover = function () {
                 modules.render("想了解更多关于我的信息吗？");
@@ -189,19 +171,31 @@ var Paul_Pio = function (prop) {
                 modules.destroy();
             };
             elements.close.onmouseover = function () {
-                prop.content.close ? modules.render(prop.content.close) : modules.render("QWQ 下次再见吧~");
+                modules.render(prop.content.close || "QWQ 下次再见吧~");
             };
             current.menu.appendChild(elements.close);
-            document.cookie = "posterGirl=false;" + "path=/";
         },
         custom: function () {
             prop.content.custom.forEach(function (t) {
+                if(!t.type) t.type = "default";
                 var e = document.querySelectorAll(t.selector);
 
                 if(e.length){
                     for(var j = 0; j < e.length; j++){
-                        e[j].onmouseover = function () {
-                            modules.render(t.text);
+                        if(t.type === "read"){
+                            e[j].onmouseover = function () {
+                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                            }
+                        }
+                        else if(t.type === "link"){
+                            e[j].onmouseover = function () {
+                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                            }
+                        }
+                        else if(t.text){
+                            e[j].onmouseover = function () {
+                                modules.render(t.text);
+                            }
                         }
                     }
                 }
@@ -212,14 +206,13 @@ var Paul_Pio = function (prop) {
     /* - 运行 */
     var begin = {
         static: function () {
-            action.welcome(); action.article();
             current.body.classList.add("static");
         },
         fixed: function () {
-            action.welcome(); action.article(); action.touch(); action.buttons();
+            action.touch(); action.buttons();
         },
         draggable: function () {
-            action.welcome(); action.article(); action.touch(); action.buttons();
+            action.touch(); action.buttons();
 
             var body = current.body;
             body.onmousedown = function () {
@@ -250,6 +243,8 @@ var Paul_Pio = function (prop) {
             current.body.classList.add("hidden");
         }
         else{
+            action.welcome();
+
             switch (prop.mode){
                 case "static": begin.static(); break;
                 case "fixed":  begin.fixed(); break;

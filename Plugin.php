@@ -1,10 +1,10 @@
 <?php
 /**
- * 一个简易的 Live2D 插件，建立在 <a href="https://github.com/journey-ad/live2d_src">@Jad</a> 的项目上
+ * 一个简易的 Live2D 插件，在 <a href="https://github.com/journey-ad/live2d_src">@Jad</a> 的项目上增加交互功能
  *
  * @package Pio
  * @author Dreamer-Paul
- * @version 2.3
+ * @version 2.4
  * @link https://paugram.com
  */
 
@@ -39,7 +39,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
 
             echo "</div>";
         }
-        paul_update("Pio", "2.3");
+        paul_update("Pio", "2.4");
 
         // 读取模型文件夹
         $models = array();
@@ -106,13 +106,9 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             '0', _t('时间小贴士'), _t('开启后将在没有访问来源的情况下展示，覆盖入站提示'));
         $form -> addInput($tips);
 
-        // 自定义文字配置
-        $dialog = new Typecho_Widget_Helper_Form_Element_Textarea('dialog', NULL, NULL, _t('自定义提示内容'), _t('在这里填入你的自定义看板娘提示内容，如想保持默认，请留空'));
+        // 交互提示扩展
+        $dialog = new Typecho_Widget_Helper_Form_Element_Textarea('dialog', NULL, NULL, _t('交互提示扩展'), _t('在这里填入你的自定义交互提示配置信息，如想保持默认，请留空'));
         $form -> addInput($dialog);
-
-        // 自定义选择器配置
-        $selector = new Typecho_Widget_Helper_Form_Element_Textarea('selector', NULL, NULL, _t('自定义内容选择器'), _t('在这里填入部分功能所用到的自定义选择器，如不想启用此类功能，请留空'));
-        $form -> addInput($selector);
     }
 
     /* 个人用户的配置方法 */
@@ -138,8 +134,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             $config = array(
                 "mode" => $plugin -> custom_mode,
                 "hidden" => $plugin -> hidden == 1 ? true : false,
-                "content" => $plugin -> dialog ? json_decode($plugin -> dialog, true) : array(),
-                "selector" => $plugin -> selector ? json_decode($plugin -> selector, true) : array()
+                "content" => $plugin -> dialog ? json_decode($plugin -> dialog, true) : array()
             );
 
             if($plugin -> custom_model){
