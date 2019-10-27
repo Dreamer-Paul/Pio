@@ -177,28 +177,28 @@ var Paul_Pio = function (prop) {
         },
         custom: function () {
             prop.content.custom.forEach(function (t) {
-                if(!t.type) t.type = "default";
-                var e = document.querySelectorAll(t.selector);
-
-                if(e.length){
-                    for(var j = 0; j < e.length; j++){
-                        if(t.type === "read"){
-                            e[j].onmouseover = function () {
-                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
-                            }
-                        }
-                        else if(t.type === "link"){
-                            e[j].onmouseover = function () {
-                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
-                            }
-                        }
-                        else if(t.text){
-                            e[j].onmouseover = function () {
-                                modules.render(t.text);
+                if (!t.type) t.type = "default";
+                let items = t.selector === Array ? t.selector : [t.selector];
+                items.forEach(function (item) {
+                    let e = document.querySelectorAll(item);
+                    if (e.length) {
+                        for (let j = 0; j < e.length; j++) {
+                            if (t.type === "read") {
+                                e[j].onmouseover = function () {
+                                    modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                                }
+                            } else if (t.type === "link") {
+                                e[j].onmouseover = function () {
+                                    modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                                }
+                            } else if (t.text) {
+                                e[j].onmouseover = function () {
+                                    modules.render(t.text);
+                                }
                             }
                         }
                     }
-                }
+                });
             });
         }
     };
