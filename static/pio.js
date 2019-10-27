@@ -178,7 +178,7 @@ var Paul_Pio = function (prop) {
         custom: function () {
             prop.content.custom.forEach(function (t) {
                 if (!t.type) t.type = "default";
-                let items = t.selector === Array ? t.selector : [t.selector];
+                let items = t.selector.constructor === Array ? t.selector : [t.selector];
                 items.forEach(function (item) {
                     let e = document.querySelectorAll(item);
                     if (e.length) {
