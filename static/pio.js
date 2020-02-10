@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2019.12.10
+# Last Update: 2020.02.10
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -16,7 +16,7 @@ var Paul_Pio = function (prop) {
         idol: 0,
         menu: document.querySelector(".pio-container .pio-action"),
         canvas: document.getElementById("pio"),
-        body: document.getElementsByClassName("pio-container")[0],
+        body: document.querySelector(".pio-container"),
         root: document.location.protocol +'//' + document.location.hostname +'/'
     };
 
@@ -59,7 +59,7 @@ var Paul_Pio = function (prop) {
         // 移除方法
         destroy: function () {
             current.body.parentNode.removeChild(current.body);
-            document.cookie = "posterGirl=false;" + "path=/";
+            localStorage.setItem("posterGirl", false);
         }
     };
 
@@ -240,6 +240,8 @@ var Paul_Pio = function (prop) {
 
     // 运行
     this.init = function (onlyText) {
+        current.body.classList.add("loaded");
+
         if(prop.hidden === true && window.innerWidth < 400){
             current.body.classList.add("hidden");
         }
@@ -258,7 +260,7 @@ var Paul_Pio = function (prop) {
             if(prop.content.custom) action.custom();
         }
     };
-    this.init();
+    if(!localStorage.getItem("posterGirl")) this.init();
 };
 
 // 请保留版权说明

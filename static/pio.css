@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2019.8.8
+# Last Update: 2020.02.10
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -17,6 +17,9 @@
     position: fixed;
     user-select: none;
 }
+.pio-container:not(.loaded){ display: none }
+.pio-container:not(.draggable){ bottom: 0 }
+
 .pio-container.left{ left: 0 }
 .pio-container.right{ right: 0 }
 .pio-container.active{ cursor: move }
@@ -59,13 +62,13 @@
 .pio-action .pio-night{
     background-image: url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUxMiAyMDkuNDAzMjQxYy0yMDEuNzMxNTE0IDAtMzc0LjAwOTIwNiAxMjUuNDc2NzgzLTQ0My44MDg5MjIgMzAyLjU5Njc1OSA2OS43OTg2OTIgMTc3LjExOTk3NyAyNDIuMDc3NDA4IDMwMi41OTY3NTkgNDQzLjgwODkyMiAzMDIuNTk2NzU5IDIwMS45MzMxMDUgMCAzNzQuMDEwMjI5LTEyNS40NzY3ODMgNDQzLjgwODkyMi0zMDIuNTk2NzU5Qzg4Ni4wMDkyMDYgMzM0Ljg4MDAyMyA3MTMuOTMzMTA1IDIwOS40MDMyNDEgNTEyIDIwOS40MDMyNDF6TTUxMiA3MTMuNzMxNTE0Yy0xMTEuMzU1MTU3IDAtMjAxLjczMTUxNC05MC4zNzUzMzQtMjAxLjczMTUxNC0yMDEuNzMxNTE0czkwLjM3NTMzNC0yMDEuNzMxNTE0IDIwMS43MzE1MTQtMjAxLjczMTUxNCAyMDEuNzMxNTE0IDkwLjM3NTMzNCAyMDEuNzMxNTE0IDIwMS43MzE1MTRTNjIzLjM1NTE1NyA3MTMuNzMxNTE0IDUxMiA3MTMuNzMxNTE0ek01MTIgMzkwLjk2MTI5NmMtNjYuNzcyNzc2IDAtMTIxLjAzODcwNCA1NC4yNjU5MjgtMTIxLjAzODcwNCAxMjEuMDM4NzA0czU0LjI2NTkyOCAxMjEuMDM4NzA0IDEyMS4wMzg3MDQgMTIxLjAzODcwNCAxMjEuMDM4NzA0LTU0LjI2NTkyOCAxMjEuMDM4NzA0LTEyMS4wMzg3MDRTNTc4Ljc3Mjc3NiAzOTAuOTYxMjk2IDUxMiAzOTAuOTYxMjk2eiI+PC9wYXRoPjwvc3ZnPg==);
 }
+
 .pio-container .pio-dialog{
     top: -2em;
-    left: 1em;
-    right: 1em;
     opacity: 0;
     z-index: -1;
     font-size: .8em;
+    min-width: 12em;
     background: #fff;
     padding: .75em 1em;
     border-radius: 1em;
@@ -79,6 +82,9 @@
     opacity: 1;
     visibility: visible;
 }
+
+.pio-container.left .pio-dialog{ left: 1em }
+.pio-container.right .pio-dialog{ right: 1em }
 
 #pio{ vertical-align: middle }
 
