@@ -6,7 +6,7 @@
 
 ## 使用方法
 
-> 奇趣保罗自己搭建的 [梦象](https://mx-model.ga) 资源站上提供了较多可用于本插件的模型资源，如果你也想在这里提交自己的原创作品，不妨现在就和我 [取得联系](https://paul.ren) 吧！
+> 奇趣保罗自己搭建的 [梦象](https://mx.paul.ren) 资源站上提供了较多可用于本插件的模型资源，如果你也想在这里提交自己的原创作品，不妨现在就和我 [取得联系](https://paul.ren) 吧！
 
 1. Star 本项目
 2. 从这里 [下载](https://github.com/Dreamer-Paul/Pio/archive/master.zip) 本插件
@@ -29,10 +29,9 @@
 
 同时欢迎前往 [保罗的小窝](https://paul.ren/donate) 为我提供赞助，谢谢您！
 
-## 使用的开源项目
-
-- [Live2D-SRC](https://github.com/journey-ad/live2d_src)
-
 ## 感谢
 
+感谢来自开源社区提供的解决方案，简化了本项目的不少工作！
+
 - [Live2D](https://www.live2d.com)
+- [Live2D-SRC](https://github.com/journey-ad/live2d_src)

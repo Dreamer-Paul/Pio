@@ -18,7 +18,6 @@
     user-select: none;
 }
 .pio-container:not(.loaded){ display: none }
-.pio-container:not(.draggable){ bottom: 0 }
 
 .pio-container.left{ left: 0 }
 .pio-container.right{ right: 0 }

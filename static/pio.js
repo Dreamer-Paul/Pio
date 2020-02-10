@@ -59,7 +59,7 @@ var Paul_Pio = function (prop) {
         // 移除方法
         destroy: function () {
             current.body.parentNode.removeChild(current.body);
-            localStorage.setItem("posterGirl", false);
+            localStorage.setItem("posterGirl", 0);
         }
     };
 
@@ -216,17 +216,18 @@ var Paul_Pio = function (prop) {
             action.touch(); action.buttons();
 
             var body = current.body;
-            body.onmousedown = function () {
+            body.onmousedown = function (downEvent) {
                 var location = {
-                    x: event.clientX - this.offsetLeft,
-                    y: event.clientY - this.offsetTop
+                    x: downEvent.clientX - this.offsetLeft,
+                    y: downEvent.clientY - this.offsetTop
                 };
 
-                function move(e) {
+                function move(moveEvent) {
                     body.classList.add("active");
                     body.classList.remove("right");
-                    body.style.left = (event.clientX - location.x) + 'px';
-                    body.style.top  = (event.clientY - location.y) + 'px';
+                    body.style.left = (moveEvent.clientX - location.x) + 'px';
+                    body.style.top  = (moveEvent.clientY - location.y) + 'px';
+                    body.style.bottom = "auto";
                 }
 
                 document.addEventListener("mousemove", move);
