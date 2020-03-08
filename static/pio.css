@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2020.02.10
+# Last Update: 2020.3.8
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -90,5 +90,4 @@
 @media screen and (max-width: 768px){
     #pio{ width: 8em }
     .pio-container{ pointer-events: none }
-    .pio-container.hidden, .pio-action, .pio-dialog{ display: none }
 }
