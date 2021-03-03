@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2020.3.8
+# Last Update: 2021.3.3
 
 一个支持更换 Live2D 模型的 Typecho 插件。
 
@@ -11,7 +11,8 @@
 ---- */
 
 var Paul_Pio = function (prop) {
-    this.prop = prop;
+    var that = this;
+
     var current = {
         idol: 0,
         menu: document.querySelector(".pio-container .pio-action"),
@@ -58,7 +59,7 @@ var Paul_Pio = function (prop) {
         },
         // 移除方法
         destroy: function () {
-            current.body.parentNode.removeChild(current.body);
+            that.initHidden();
             localStorage.setItem("posterGirl", 0);
         },
         // 是否为移动设备
@@ -69,17 +70,21 @@ var Paul_Pio = function (prop) {
             return window.innerWidth < 500 || ua !== -1;
         }
     };
+    this.destroy = modules.destroy;
 
     var elements = {
         home: modules.create("span", {class: "pio-home"}),
         skin: modules.create("span", {class: "pio-skin"}),
         info: modules.create("span", {class: "pio-info"}),
         night: modules.create("span", {class: "pio-night"}),
-        close: modules.create("span", {class: "pio-close"})
+        close: modules.create("span", {class: "pio-close"}),
+
+        show: modules.create("div", {class: "pio-show"})
     };
 
     var dialog = modules.create("div", {class: "pio-dialog"});
     current.body.appendChild(dialog);
+    current.body.appendChild(elements.show);
 
     /* - 提示操作 */
     var action = {
@@ -249,8 +254,6 @@ var Paul_Pio = function (prop) {
     // 运行
     this.init = function (onlyText) {
         if(!(prop.hidden && modules.isMobile())){
-            current.body.classList.add("loaded");
-
             if(!onlyText){
                 action.welcome();
                 loadlive2d("pio", prop.model[0]);
@@ -265,7 +268,20 @@ var Paul_Pio = function (prop) {
             if(prop.content.custom) action.custom();
         }
     };
-    if(!localStorage.getItem("posterGirl")) this.init();
+
+    // 隐藏状态
+    this.initHidden = function () {
+        current.body.classList.add("hidden");
+        dialog.classList.remove("active");
+
+        elements.show.onclick = function () {
+            current.body.classList.remove("hidden");
+            localStorage.setItem("posterGirl", 1);
+            that.init();
+        }
+    }
+
+    localStorage.getItem("posterGirl") == 0 ? this.initHidden() : this.init();
 };
 
 // 请保留版权说明
