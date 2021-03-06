@@ -35,10 +35,12 @@ function loadlive2d(canvas, json_object_or_url) {
 
         const canvas_ = document.getElementById("pio")
 
-        const scaleX = canvas_.width / model.width;
-        const scaleY = canvas_.height / model.height;
+        const vertical_factor = canvas_.height / model.height
+        model.scale.set(vertical_factor)
 
-        model.scale.set(Math.min(scaleX, scaleY));
+        // match canvas to model width
+        canvas_.width = model.width
+        pio_refresh_style()
 
         // check alignment, and align model to corner
         if (document.getElementsByClassName("pio-container").item(0).className.includes("left")){
@@ -46,8 +48,6 @@ function loadlive2d(canvas, json_object_or_url) {
         } else {
             model.x = canvas_.width - model.width
         }
-        model.y = (canvas_.height - model.height) / 2
-
 
         // Hit callback definition
         model.on('hit', hitAreas => {
