@@ -130,4 +130,4 @@ let pio_alignment = "right"
 
 
 let app
-_pio_initialize()
+window.addEventListener("DOMContentLoaded", _pio_initialize)
