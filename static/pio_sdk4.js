@@ -2,12 +2,14 @@
 
 # Pio SDK 2/3/4 support
 # By: jupiterbjy
-# Last Update: 2021.3.6
+# Last Update: 2021.3.7
 
 To use this, you need to include following sources to your HTML file first.
 Basic usage is same with Paul-Pio.
 
 Make sure to call `pio_refresh_style()` upon changing styles on either *pio-container* or *pio* canvas object.
+
+To change alignment, modify variable `pio_alignment` to either `left` or `right`, then call `pio_refresh_style()`.
 
 <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js"></script>
@@ -89,7 +91,7 @@ function _pio_initialize_container(){
 }
 
 
-function pio_refresh_style(alignment="right"){
+function pio_refresh_style(){
     // Had to separate this from PIXI initialization
     // or first loaded Live2D's size will break on resizing.
     //
@@ -99,7 +101,7 @@ function pio_refresh_style(alignment="right"){
     let pio_container = document.getElementsByClassName("pio-container").item(0)
 
     pio_container.classList.remove("left", "right")
-    pio_container.classList.add(alignment)
+    pio_container.classList.add(pio_alignment)
 
     app.resizeTo = document.getElementById("pio")
 }
@@ -121,6 +123,11 @@ function _pio_initialize() {
 
     pio_refresh_style()
 }
+
+// change alignment to left by modifying this value in other script.
+// Make sure to call `pio_refresh_style` to apply changes!
+let pio_alignment = "right"
+
 
 let app
 _pio_initialize()
