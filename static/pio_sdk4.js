@@ -2,12 +2,13 @@
 
 # Pio SDK 2/3/4 support
 # By: jupiterbjy
-# Last Update: 2021.3.7
+# Last Update: 2021.4.22
 
 To use this, you need to include following sources to your HTML file first.
+With this script, you don't have to include `l2d.js`. Testing is done without it.
 Basic usage is same with Paul-Pio.
 
-Make sure to call `pio_refresh_style()` upon changing styles on either *pio-container* or *pio* canvas object.
+Make sure to call `pio_refresh_style()` upon changing styles on anything related to 'pio-container' and it's children.
 
 To change alignment, modify variable `pio_alignment` to either `left` or `right`, then call `pio_refresh_style()`.
 
@@ -16,14 +17,28 @@ To change alignment, modify variable `pio_alignment` to either `left` or `right`
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@5.3.6/dist/pixi.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display/dist/index.min.js"></script>
 
+If you have trouble setting up this, check following example's sources.
+https://jupiterbjy.github.io/PaulPio_PIXI_Demo/
+
 ---- */
 
 
-function loadlive2d(canvas, json_object_or_url) {
+function loadlive2d(canvas_id, json_object_or_url) {
     // Replaces original l2d method 'loadlive2d' for Pio.
+    // Heavily relies on pixi_live2d_display.
 
-    console.log("[Pio] Loading new model!")
+    console.log("[Pio] Loading new model")
 
+    const canvas = document.getElementById(canvas_id)
+
+    // When pio was start minimized on browser refresh or reload,
+    // canvas is set to 0, 0 dimension and need to be changed.
+    if (canvas.width === 0) {
+        canvas.removeAttribute("height")
+        pio_refresh_style()
+    }
+
+    // Try to remove previous model, if any exists.
     try {
         app.stage.removeChildAt(0)
     } catch (error) {
@@ -35,39 +50,35 @@ function loadlive2d(canvas, json_object_or_url) {
     model.once("load", () => {
         app.stage.addChild(model)
 
-        const canvas_ = document.getElementById("pio")
-
-        const vertical_factor = canvas_.height / model.height
+        const vertical_factor = canvas.height / model.height
         model.scale.set(vertical_factor)
 
         // match canvas to model width
-        canvas_.width = model.width
+        canvas.width = model.width
         pio_refresh_style()
 
         // check alignment, and align model to corner
         if (document.getElementsByClassName("pio-container").item(0).className.includes("left")){
             model.x = 0
         } else {
-            model.x = canvas_.width - model.width
+            model.x = canvas.width - model.width
         }
 
         // Hit callback definition
-        model.on('hit', hitAreas => {
-            if (hitAreas.includes('body')) {
-                console.log(`[Pio] Touch on body (SDK2)`)
+        model.on("hit", hitAreas => {
+            if (hitAreas.includes("body")) {
+                console.log("[Pio] Touch on body (SDK2)")
                 model.motion('tap_body')
 
             } else if (hitAreas.includes("Body")) {
-                console.log(`[Pio] Touch on body (SDK3/4)`)
-                model.motion('Tap')
+                console.log("[Pio] Touch on body (SDK3/4)")
+                model.motion("Tap")
 
             } else if (hitAreas.includes("head") || hitAreas.includes("Head")){
-                console.log(`[Pio] Touch on head`)
+                console.log("[Pio] Touch on head")
                 model.expression()
             }
         })
-        console.log(`[Pio] New model h/w dimension: ${model.height} ${model.width}`)
-        console.log(`[Pio] New model x/y offset: ${model.x} ${model.y}`)
     })
 }
 
@@ -77,6 +88,7 @@ function _pio_initialize_container(){
     // Generate structure
     let pio_container = document.createElement("div")
     pio_container.classList.add("pio-container")
+    pio_container.id = "pio-container"
     document.body.insertAdjacentElement("beforeend", pio_container)
 
     // Generate action
@@ -88,13 +100,12 @@ function _pio_initialize_container(){
     let pio_canvas = document.createElement("canvas")
     pio_canvas.id = "pio"
     pio_container.insertAdjacentElement("beforeend", pio_canvas)
+
+    console.log("[Pio] Initialized container.")
 }
 
 
 function pio_refresh_style(){
-    // Had to separate this from PIXI initialization
-    // or first loaded Live2D's size will break on resizing.
-    //
     // Always make sure to call this after container/canvas style changes!
     // You can set alignment here, but still you can change it manually.
 
@@ -107,22 +118,21 @@ function pio_refresh_style(){
 }
 
 
-function _pio_initialize_pixi_app() {
+function _pio_initialize_pixi() {
+    // Initialize html elements and pixi app.
+    // Must run before pio init.
+
+    _pio_initialize_container()
 
     app = new PIXI.Application({
         view: document.getElementById("pio"),
         transparent: true,
         autoStart: true,
     })
-}
-
-
-function _pio_initialize() {
-    _pio_initialize_container()
-    _pio_initialize_pixi_app()
 
     pio_refresh_style()
 }
+
 
 // change alignment to left by modifying this value in other script.
 // Make sure to call `pio_refresh_style` to apply changes!
@@ -130,4 +140,4 @@ let pio_alignment = "right"
 
 
 let app
-window.addEventListener("DOMContentLoaded", _pio_initialize)
+window.addEventListener("DOMContentLoaded", _pio_initialize_pixi)
