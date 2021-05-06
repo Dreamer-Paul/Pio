@@ -2,9 +2,9 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2021.3.3
+# Last Update: 2021.5.6
 
-一个支持更换 Live2D 模型的 Typecho 插件。
+一个支持更换 Live2D 模型的 JS 插件
 
 本代码为奇趣保罗原创，并遵守 GPL 2.0 开源协议。欢迎访问我的博客：https://paugram.com
 
@@ -171,7 +171,7 @@ var Paul_Pio = function (prop) {
             // 夜间模式
             if(prop.night){
                 elements.night.onclick = function () {
-                    eval(prop.night);
+                    typeof prop.night === "function" ? prop.night() : eval(prop.night);
                 };
                 elements.night.onmouseover = function () {
                     modules.render("夜间点击这里可以保护眼睛呢");
@@ -271,6 +271,13 @@ var Paul_Pio = function (prop) {
 
     // 隐藏状态
     this.initHidden = function () {
+        // ! 清除预设好的间距
+        if(prop.mode === "draggable"){
+            current.body.style.top = null;
+            current.body.style.left = null;
+            current.body.style.bottom = null;
+        }
+
         current.body.classList.add("hidden");
         dialog.classList.remove("active");
 
