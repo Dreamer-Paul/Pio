@@ -78,7 +78,7 @@ var Paul_Pio = function (prop) {
         info: modules.create("span", {class: "pio-info"}),
         night: modules.create("span", {class: "pio-night"}),
         close: modules.create("span", {class: "pio-close"}),
-
+        totop: modules.create("span", {class: "pio-totop"}),
         show: modules.create("div", {class: "pio-show"})
     };
 
@@ -148,7 +148,24 @@ var Paul_Pio = function (prop) {
                 modules.render(prop.content.home || "点击这里回到首页！");
             };
             current.menu.appendChild(elements.home);
-
+                        // 返回顶部
+            elements.totop.onclick = function () {
+                var timer = setInterval(function () {
+                    //获取滚动条的滚动高度
+                    var osTop = document.documentElement.scrollTop || document.body.scrollTop;
+                    //用于设置速度差，产生缓动的效果
+                    var speed = Math.floor(-osTop / 6);
+                    document.documentElement.scrollTop = document.body.scrollTop = osTop + speed;
+                    isTop = true;  //用于阻止滚动事件清除定时器
+                    if (osTop == 0) {
+                        clearInterval(timer);
+                    }
+                }, 30);
+            };
+            elements.totop.onmouseover = function () {
+                modules.render("点击这里回到顶部！");
+            };
+            current.menu.appendChild(elements.totop);            
             // 更换模型
             elements.skin.onclick = function () {
                 loadlive2d("pio", prop.model[modules.idol()]);
