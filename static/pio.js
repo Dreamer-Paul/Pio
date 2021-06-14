@@ -140,6 +140,7 @@ var Paul_Pio = function (prop) {
         },
         // 右侧按钮
         buttons: function () {
+
             // 返回首页
             elements.home.onclick = function () {
                 location.href = current.root;
@@ -147,8 +148,11 @@ var Paul_Pio = function (prop) {
             elements.home.onmouseover = function () {
                 modules.render(prop.content.home || "点击这里回到首页！");
             };
-            current.menu.appendChild(elements.home);
-                        // 返回顶部
+            if(!prop.button.home){
+                current.menu.appendChild(elements.home);
+            }
+
+            // 返回顶部
             elements.totop.onclick = function () {
                 var timer = setInterval(function () {
                     //获取滚动条的滚动高度
@@ -156,7 +160,6 @@ var Paul_Pio = function (prop) {
                     //用于设置速度差，产生缓动的效果
                     var speed = Math.floor(-osTop / 6);
                     document.documentElement.scrollTop = document.body.scrollTop = osTop + speed;
-                    isTop = true;  //用于阻止滚动事件清除定时器
                     if (osTop == 0) {
                         clearInterval(timer);
                     }
@@ -165,7 +168,10 @@ var Paul_Pio = function (prop) {
             elements.totop.onmouseover = function () {
                 modules.render("点击这里回到顶部！");
             };
-            current.menu.appendChild(elements.totop);            
+            if(!prop.button.totop){
+                current.menu.appendChild(elements.totop);
+            }
+
             // 更换模型
             elements.skin.onclick = function () {
                 loadlive2d("pio", prop.model[modules.idol()]);
@@ -174,7 +180,9 @@ var Paul_Pio = function (prop) {
             elements.skin.onmouseover = function () {
                 prop.content.skin && prop.content.skin[0] ? modules.render(prop.content.skin[0]) : modules.render("想看看我的新衣服吗？");
             };
-            if(prop.model.length > 1) current.menu.appendChild(elements.skin);
+            if(!prop.button.skin){
+                if(prop.model.length > 1) current.menu.appendChild(elements.skin);
+            }
 
             // 关于我
             elements.info.onclick = function () {
@@ -183,7 +191,9 @@ var Paul_Pio = function (prop) {
             elements.info.onmouseover = function () {
                 modules.render("想了解更多关于我的信息吗？");
             };
-            current.menu.appendChild(elements.info);
+            if(!prop.button.info){
+                current.menu.appendChild(elements.info);
+            }
 
             // 夜间模式
             if(prop.night){
@@ -193,7 +203,9 @@ var Paul_Pio = function (prop) {
                 elements.night.onmouseover = function () {
                     modules.render("夜间点击这里可以保护眼睛呢");
                 };
-                current.menu.appendChild(elements.night);
+                if(!prop.button.night){
+                    current.menu.appendChild(elements.night);
+                }
             }
 
             // 关闭看板娘
@@ -203,7 +215,9 @@ var Paul_Pio = function (prop) {
             elements.close.onmouseover = function () {
                 modules.render(prop.content.close || "QWQ 下次再见吧~");
             };
-            current.menu.appendChild(elements.close);
+            if(!prop.button.close){
+                current.menu.appendChild(elements.close);
+            }
         },
         custom: function () {
             prop.content.custom.forEach(function (t) {
@@ -214,17 +228,17 @@ var Paul_Pio = function (prop) {
                     for(var j = 0; j < e.length; j++){
                         if(t.type === "read"){
                             e[j].onmouseover = function () {
-                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText.substring(0, 30) + "”"));
                             }
                         }
                         else if(t.type === "link"){
                             e[j].onmouseover = function () {
-                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText.substring(0, 30) + "”"));
                             }
                         }
                         else if(t.text){
                             e[j].onmouseover = function () {
-                                modules.render(t.text);
+                                modules.render(t.text.substring(0, 30));
                             }
                         }
                     }

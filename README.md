@@ -1,37 +1,64 @@
 # Pio
 
-一个支持更换 Live2D 模型的 Typecho 插件。
+这是我（萧叶轩）的魔改版 Pio，非魔改版可以看原作者的仓库或者本仓库的 pr 分支
 
-本插件不存在任何依赖的样式和库，在后续版本当中我会逐渐实现一些有趣的功能。
+主要魔改点：
 
-## 使用方法
+1. 增加返回到顶部按钮
+2. 调整按钮栏高度
+3. 调整消息框高度
+4. 添加按钮的 开启/隐藏
+5. 防止消息内容过多，进行截取前 30 个字符
 
-> 奇趣保罗自己搭建的 [梦象](https://mx.paul.ren) 资源站上提供了较多可用于本插件的模型资源，如果你也想在这里提交自己的原创作品，不妨现在就和我 [取得联系](https://paul.ren) 吧！
+现在你可以通过配置文件自定义显示哪些按钮，例如：
 
-1. Star 本项目
-2. 从这里 [下载](https://github.com/Dreamer-Paul/Pio/archive/master.zip) 本插件
-3. 将插件文件夹重命名为 `Pio`
-4. 上传本插件，并放置在 `usr/plugins/` 目录下
-5. 登录你的 Typecho 后台，找到 `Pio` 选择启用插件
-6. 你可以通过 [选择](https://docs.paul.ren/pio/#/?id=选择模型) 或 [外链](https://docs.paul.ren/pio/#/?id=选择外链模型) 的方式引用你获得的模型资源
-7. 想了解更多的玩法，欢迎阅读 [插件文档](https://docs.paul.ren/pio)。如果对本项目有任何的建议和想法，欢迎随时提出~
+```js
 
-## 项目相关
+var pio = new Paul_Pio({
+    "mode": "static",
+    "hidden": false,
+    "content": {
+        "welcome": "欢迎来到保罗的小窝"
+    },
+    "night": "single.night()",
+    "model": ["static/pio/model.json"],
+    "tips": true
+});
 
-- 开发故事：[给你的博客增加动态看板娘](https://paugram.com/coding/add-poster-girl-with-plugin.html)
-- 帮助文档 & 常见问题：[传送门](https://docs.paul.ren/pio)
+```
 
-## 开源协议
+修改为
 
-由于原项目使用 GPL 2.0 协议，故本项目也采用相同的开源协议进行授权。
+```js
 
-原创不易！如果喜欢本项目，请 Star 它以示对我的支持~
+var pio = new Paul_Pio({
+    "mode": "static",
+    "hidden": false,
+    "content": {
+        "welcome": "欢迎来到保罗的小窝"
+    },
+    "night": "single.night()",
+    "button": {
+        totop: true,
+        home: true,
+        skin: true,
+        info: true,
+        night: true,
+        close: true
+    }
+    "model": ["static/pio/model.json"],
+    "tips": true
+});
 
-同时欢迎前往 [保罗的小窝](https://paul.ren/donate) 为我提供赞助，谢谢您！
+```
 
-## 感谢
++ totop：返回到顶部
++ home：返回到主页
++ skin：更换皮肤
++ info：作者信息
++ night：夜间模式
++ close：关闭
 
-感谢来自开源社区提供的解决方案，简化了本项目的不少工作！
+为了简化代码， **值为 true 时是不显示按钮**，并且缺省时为显示按钮。
 
-- [Live2D](https://www.live2d.com)
-- [Live2D-SRC](https://github.com/journey-ad/live2d_src)
+魔改版基本兼容原版，不需要过多配置。
