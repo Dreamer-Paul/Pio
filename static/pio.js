@@ -205,6 +205,11 @@ var Paul_Pio = function (prop) {
                                 modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
                             }
                         }
+                        else if (t.type === "title") {
+                            e[j].onmouseover = function () {
+                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.getAttribute("title") + "”"));
+                            }
+                        }
                         else if(t.text){
                             e[j].onmouseover = function () {
                                 modules.render(t.text);
