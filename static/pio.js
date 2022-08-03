@@ -197,12 +197,14 @@ var Paul_Pio = function (prop) {
                     for(var j = 0; j < e.length; j++){
                         if(t.type === "read"){
                             e[j].onmouseover = function () {
-                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                                var text = this.getAttribute("title") || this.innerText;
+                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + text + "”"));
                             }
                         }
                         else if(t.type === "link"){
                             e[j].onmouseover = function () {
-                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + this.innerText + "”"));
+                                var text = this.getAttribute("title") || this.innerText;
+                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + text + "”"));
                             }
                         }
                         else if(t.text){
