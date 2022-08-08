@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2021.5.6
+# Last Update: 2022.8.8
 
 一个支持更换 Live2D 模型的 JS 插件
 
@@ -15,52 +15,25 @@ var Paul_Pio = function (prop) {
 
     var current = {
         idol: 0,
+        timeout: undefined,
         menu: document.querySelector(".pio-container .pio-action"),
         canvas: document.getElementById("pio"),
         body: document.querySelector(".pio-container"),
         root: document.location.protocol +'//' + document.location.hostname +'/'
     };
 
-    /* - 方法 */
-    var modules = {
-        // 更换模型
-        idol: function () {
-            current.idol < (prop.model.length - 1) ? current.idol++ : current.idol = 0;
-            return current.idol;
-        },
+    // 工具通用函数
+    var tools = {
         // 创建内容
         create: function (tag, prop) {
-            var e = document.createElement(tag);
-            if(prop.class) e.className = prop.class;
-            return e;
+            var el = document.createElement(tag);
+            prop.class && (el.className = prop.class);
+
+            return el;
         },
         // 随机内容
         rand: function (arr) {
             return arr[Math.floor(Math.random() * arr.length + 1) - 1];
-        },
-        // 创建对话框方法
-        render: function (text) {
-            if(text.constructor === Array){
-                dialog.innerText = modules.rand(text);
-            }
-            else if(text.constructor === String){
-                dialog.innerText = text;
-            }
-            else{
-                dialog.innerText = "输入内容出现问题了 X_X";
-            }
-
-            dialog.classList.add("active");
-
-            clearTimeout(this.t);
-            this.t = setTimeout(function () {
-                dialog.classList.remove("active");
-            }, 3000);
-        },
-        // 移除方法
-        destroy: function () {
-            that.initHidden();
-            localStorage.setItem("posterGirl", 0);
         },
         // 是否为移动设备
         isMobile: function () {
@@ -69,22 +42,60 @@ var Paul_Pio = function (prop) {
 
             return window.innerWidth < 500 || ua !== -1;
         }
-    };
-    this.destroy = modules.destroy;
+    }
 
     var elements = {
-        home: modules.create("span", {class: "pio-home"}),
-        skin: modules.create("span", {class: "pio-skin"}),
-        info: modules.create("span", {class: "pio-info"}),
-        night: modules.create("span", {class: "pio-night"}),
-        close: modules.create("span", {class: "pio-close"}),
+        home: tools.create("span", { class: "pio-home" }),
+        skin: tools.create("span", { class: "pio-skin" }),
+        info: tools.create("span", { class: "pio-info" }),
+        night: tools.create("span", { class: "pio-night" }),
+        close: tools.create("span", { class: "pio-close" }),
 
-        show: modules.create("div", {class: "pio-show"})
+        dialog: tools.create("div", { class: "pio-dialog" }),
+        show: tools.create("div", { class: "pio-show" })
     };
 
-    var dialog = modules.create("div", {class: "pio-dialog"});
-    current.body.appendChild(dialog);
+    current.body.appendChild(elements.dialog);
     current.body.appendChild(elements.show);
+
+    /* - 方法 */
+    var modules = {
+        // 更换模型
+        idol: function () {
+            current.idol < (prop.model.length - 1) ? current.idol++ : current.idol = 0;
+
+            return current.idol;
+        },
+        // 创建对话框方法
+        message: function (text, dangerousHTML) {
+            const { dialog } = elements;
+
+            if(text.constructor === Array){
+                dialog.innerText = tools.rand(text);
+            }
+            else if(text.constructor === String){
+                dialog[dangerousHTML ? "innerHTML" : "innerText"] = text;
+            }
+            else{
+                dialog.innerText = "输入内容出现问题了 X_X";
+            }
+
+            dialog.classList.add("active");
+
+            current.timeout = clearTimeout(current.timeout) || undefined;
+            current.timeout = setTimeout(function () {
+                dialog.classList.remove("active");
+            }, 3000);
+        },
+        // 移除方法
+        destroy: function () {
+            that.initHidden();
+            localStorage.setItem("posterGirl", 0);
+        }
+    };
+
+    this.destroy = modules.destroy;
+    this.message = modules.message;
 
     /* - 提示操作 */
     var action = {
@@ -93,7 +104,13 @@ var Paul_Pio = function (prop) {
             if(document.referrer !== "" && document.referrer.indexOf(current.root) === -1){
                 var referrer = document.createElement('a');
                 referrer.href = document.referrer;
-                prop.content.referer ? modules.render(prop.content.referer.replace(/%t/, "“" + referrer.hostname + "”")) : modules.render("欢迎来自 “" + referrer.hostname + "” 的朋友！");
+
+                if(prop.content.referer){
+                    modules.message(prop.content.referer.replace(/%t/, "“" + referrer.hostname + "”"));
+                }
+                else{
+                    modules.message("欢迎来自 “" + referrer.hostname + "” 的朋友！");
+                }
             }
             else if(prop.tips){
                 var text, hour = new Date().getHours();
@@ -126,16 +143,16 @@ var Paul_Pio = function (prop) {
                     text = "奇趣保罗说：这个是无法被触发的吧，哈哈";
                 }
 
-                modules.render(text);
+                modules.message(text);
             }
             else{
-                modules.render(prop.content.welcome || "欢迎来到本站！");
+                modules.message(prop.content.welcome || "欢迎来到本站！");
             }
         },
         // 触摸
         touch: function () {
             current.canvas.onclick = function () {
-                modules.render(prop.content.touch || ["你在干什么？", "再摸我就报警了！", "HENTAI!", "不可以这样欺负我啦！"]);
+                modules.message(prop.content.touch || ["你在干什么？", "再摸我就报警了！", "HENTAI!", "不可以这样欺负我啦！"]);
             };
         },
         // 右侧按钮
@@ -145,17 +162,17 @@ var Paul_Pio = function (prop) {
                 location.href = current.root;
             };
             elements.home.onmouseover = function () {
-                modules.render(prop.content.home || "点击这里回到首页！");
+                modules.message(prop.content.home || "点击这里回到首页！");
             };
             current.menu.appendChild(elements.home);
 
             // 更换模型
             elements.skin.onclick = function () {
                 loadlive2d("pio", prop.model[modules.idol()]);
-                prop.content.skin && prop.content.skin[1] ? modules.render(prop.content.skin[1]) : modules.render("新衣服真漂亮~");
+                prop.content.skin && prop.content.skin[1] ? modules.message(prop.content.skin[1]) : modules.message("新衣服真漂亮~");
             };
             elements.skin.onmouseover = function () {
-                prop.content.skin && prop.content.skin[0] ? modules.render(prop.content.skin[0]) : modules.render("想看看我的新衣服吗？");
+                prop.content.skin && prop.content.skin[0] ? modules.message(prop.content.skin[0]) : modules.message("想看看我的新衣服吗？");
             };
             if(prop.model.length > 1) current.menu.appendChild(elements.skin);
 
@@ -164,7 +181,7 @@ var Paul_Pio = function (prop) {
                 window.open(prop.content.link || "https://paugram.com/coding/add-poster-girl-with-plugin.html");
             };
             elements.info.onmouseover = function () {
-                modules.render("想了解更多关于我的信息吗？");
+                modules.message("想了解更多关于我的信息吗？");
             };
             current.menu.appendChild(elements.info);
 
@@ -174,7 +191,7 @@ var Paul_Pio = function (prop) {
                     typeof prop.night === "function" ? prop.night() : eval(prop.night);
                 };
                 elements.night.onmouseover = function () {
-                    modules.render("夜间点击这里可以保护眼睛呢");
+                    modules.message("夜间点击这里可以保护眼睛呢");
                 };
                 current.menu.appendChild(elements.night);
             }
@@ -184,33 +201,34 @@ var Paul_Pio = function (prop) {
                 modules.destroy();
             };
             elements.close.onmouseover = function () {
-                modules.render(prop.content.close || "QWQ 下次再见吧~");
+                modules.message(prop.content.close || "QWQ 下次再见吧~");
             };
             current.menu.appendChild(elements.close);
         },
+        // 自定义选择器
         custom: function () {
             prop.content.custom.forEach(function (t) {
                 if(!t.type) t.type = "default";
-                var e = document.querySelectorAll(t.selector);
+                var el = document.querySelectorAll(t.selector);
 
-                if(e.length){
-                    for(var j = 0; j < e.length; j++){
-                        if(t.type === "read"){
-                            e[j].onmouseover = function () {
-                                var text = this.getAttribute("title") || this.innerText;
-                                modules.render("想阅读 %t 吗？".replace(/%t/, "“" + text + "”"));
-                            }
+                if(!el.length) return;
+
+                for(var j = 0; j < el.length; j++){
+                    if(t.type === "read"){
+                        e[j].onmouseover = function () {
+                            var text = this.getAttribute("title") || this.innerText;
+                            modules.message("想阅读 %t 吗？".replace(/%t/, "“" + text + "”"));
                         }
-                        else if(t.type === "link"){
-                            e[j].onmouseover = function () {
-                                var text = this.getAttribute("title") || this.innerText;
-                                modules.render("想了解一下 %t 吗？".replace(/%t/, "“" + text + "”"));
-                            }
+                    }
+                    else if(t.type === "link"){
+                        e[j].onmouseover = function () {
+                            var text = this.getAttribute("title") || this.innerText;
+                            modules.message("想了解一下 %t 吗？".replace(/%t/, "“" + text + "”"));
                         }
-                        else if(t.text){
-                            e[j].onmouseover = function () {
-                                modules.render(t.text);
-                            }
+                    }
+                    else if(t.text){
+                        e[j].onmouseover = function () {
+                            modules.message(t.text);
                         }
                     }
                 }
@@ -254,9 +272,9 @@ var Paul_Pio = function (prop) {
     };
 
     // 运行
-    this.init = function (onlyText) {
-        if(!(prop.hidden && modules.isMobile())){
-            if(!onlyText){
+    this.init = function (noModel) {
+        if(!(prop.hidden && tools.isMobile())){
+            if(!noModel){
                 action.welcome();
                 loadlive2d("pio", prop.model[0]);
             }
@@ -281,7 +299,7 @@ var Paul_Pio = function (prop) {
         }
 
         current.body.classList.add("hidden");
-        dialog.classList.remove("active");
+        elements.dialog.classList.remove("active");
 
         elements.show.onclick = function () {
             current.body.classList.remove("hidden");
