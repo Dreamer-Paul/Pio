@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2022.8.8
+# Last Update: 2022.8.9
 
 一个支持更换 Live2D 模型的 JS 插件
 
@@ -208,26 +208,25 @@ var Paul_Pio = function (prop) {
         // 自定义选择器
         custom: function () {
             prop.content.custom.forEach(function (t) {
-                if(!t.type) t.type = "default";
                 var el = document.querySelectorAll(t.selector);
 
                 if(!el.length) return;
 
                 for(var j = 0; j < el.length; j++){
                     if(t.type === "read"){
-                        e[j].onmouseover = function () {
+                        el[j].onmouseover = function () {
                             var text = this.getAttribute("title") || this.innerText;
                             modules.message("想阅读 %t 吗？".replace(/%t/, "“" + text + "”"));
                         }
                     }
                     else if(t.type === "link"){
-                        e[j].onmouseover = function () {
+                        el[j].onmouseover = function () {
                             var text = this.getAttribute("title") || this.innerText;
                             modules.message("想了解一下 %t 吗？".replace(/%t/, "“" + text + "”"));
                         }
                     }
                     else if(t.text){
-                        e[j].onmouseover = function () {
+                        el[j].onmouseover = function () {
                             modules.message(t.text);
                         }
                     }
