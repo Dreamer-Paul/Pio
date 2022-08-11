@@ -217,14 +217,14 @@ var Paul_Pio = function (prop) {
 
                 for (let i = 0; i < el.length; i++) {
                     if (item.type === "read") {
-                        el[i].onmouseover = () => {
-                            const text = this.getAttribute("title") || this.innerText;
+                        el[i].onmouseover = (ev) => {
+                            const text = ev.currentTarget.title || ev.currentTarget.innerText;
                             modules.message("想阅读 %t 吗？".replace(/%t/, "“" + text + "”"));
                         }
                     }
                     else if (item.type === "link") {
-                        el[i].onmouseover = () => {
-                            const text = this.getAttribute("title") || this.innerText;
+                        el[i].onmouseover = (ev) => {
+                            const text = ev.currentTarget.title || ev.currentTarget.innerText;
                             modules.message("想了解一下 %t 吗？".replace(/%t/, "“" + text + "”"));
                         }
                     }
