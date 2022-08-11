@@ -2,7 +2,7 @@
 
 # Pio Plugin
 # By: Dreamer-Paul
-# Last Update: 2022.8.9
+# Last Update: 2022.8.11
 
 一个支持更换 Live2D 模型的 JS 插件
 
@@ -25,9 +25,9 @@ var Paul_Pio = function (prop) {
     // 工具通用函数
     var tools = {
         // 创建内容
-        create: function (tag, prop) {
+        create: function (tag, options) {
             var el = document.createElement(tag);
-            prop.class && (el.className = prop.class);
+            options.class && (el.className = options.class);
 
             return el;
         },
@@ -61,36 +61,36 @@ var Paul_Pio = function (prop) {
     /* - 方法 */
     var modules = {
         // 更换模型
-        idol: function () {
+        idol: () => {
             current.idol < (prop.model.length - 1) ? current.idol++ : current.idol = 0;
 
             return current.idol;
         },
         // 创建对话框方法
-        message: function (text, dangerousHTML) {
+        message: (text, options = {}) => {
             const { dialog } = elements;
 
-            if(text.constructor === Array){
+            if (text.constructor === Array) {
                 dialog.innerText = tools.rand(text);
             }
-            else if(text.constructor === String){
-                dialog[dangerousHTML ? "innerHTML" : "innerText"] = text;
+            else if (text.constructor === String) {
+                dialog[options.html ? "innerHTML" : "innerText"] = text;
             }
-            else{
+            else {
                 dialog.innerText = "输入内容出现问题了 X_X";
             }
 
             dialog.classList.add("active");
 
             current.timeout = clearTimeout(current.timeout) || undefined;
-            current.timeout = setTimeout(function () {
+            current.timeout = setTimeout(() => {
                 dialog.classList.remove("active");
-            }, 3000);
+            }, options.time || 3000);
         },
         // 移除方法
-        destroy: function () {
+        destroy: () => {
             that.initHidden();
-            localStorage.setItem("posterGirl", 0);
+            localStorage.setItem("posterGirl", "0");
         }
     };
 
@@ -271,7 +271,7 @@ var Paul_Pio = function (prop) {
     };
 
     // 运行
-    this.init = function (noModel) {
+    this.init = (noModel) => {
         if(!(prop.hidden && tools.isMobile())){
             if(!noModel){
                 action.welcome();
@@ -289,7 +289,7 @@ var Paul_Pio = function (prop) {
     };
 
     // 隐藏状态
-    this.initHidden = function () {
+    this.initHidden = () => {
         // ! 清除预设好的间距
         if(prop.mode === "draggable"){
             current.body.style.top = null;
@@ -302,12 +302,12 @@ var Paul_Pio = function (prop) {
 
         elements.show.onclick = function () {
             current.body.classList.remove("hidden");
-            localStorage.setItem("posterGirl", 1);
+            localStorage.setItem("posterGirl", "1");
             that.init();
         }
     }
 
-    localStorage.getItem("posterGirl") == 0 ? this.initHidden() : this.init();
+    localStorage.getItem("posterGirl") === "0" ? this.initHidden() : this.init();
 };
 
 // 请保留版权说明
