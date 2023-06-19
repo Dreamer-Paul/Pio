@@ -51,7 +51,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
         };
 
         // 选择模型
-        $choose_models = new Typecho_Widget_Helper_Form_Element_Checkbox('choose_models', $models, 'pio', _t('选择模型'), _t('选择插件 Models 目录下的模型，每个模型为一个文件夹，并确定配置文件名为 <a>model.json</a>'));
+        $choose_models = new Typecho_Widget_Helper_Form_Element_Checkbox('choose_models', $models, ['pio'], _t('选择模型'), _t('选择插件 Models 目录下的模型，每个模型为一个文件夹，并确定配置文件名为 <a>model.json</a>'));
         $form -> addInput($choose_models);
 
         // 选择外链模型
