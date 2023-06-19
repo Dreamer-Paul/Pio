@@ -177,7 +177,7 @@ class Pio_Plugin implements Typecho_Plugin_Interface{
             '<div class="pio-container{position}"><div class="pio-action"></div>{canvas}</div>'
         );
 
-        echo "<script src='" . Helper::options() -> pluginUrl . "/Pio/static/l2d.js' data-no-instant></script>" . "\n";
+        echo "<script src='" . Helper::options() -> pluginUrl . "/Pio/static/l2d.js'></script>" . "\n";
         echo "<script src='" . Helper::options() -> pluginUrl . "/Pio/static/pio.js'></script>" . "\n";
         echo $loader;
     }
